@@ -18,7 +18,6 @@ function startGame() {
     modifySettings();
 
     let tank = scene.getMeshByName("heroTank");
-    
 
     engine.runRenderLoop(() => {
         let deltaTime = engine.getDeltaTime(); // remind you something ?
@@ -45,9 +44,6 @@ function createScene() {
     let freeCamera = createFreeCamera(scene);
 
     let tank = createTank(scene);
-     CreateBo();
-     createwalk();
-    //let mec = delayCreateScene();
 
     // second parameter is the target to follow
     let followCamera = createFollowCamera(scene, tank);
@@ -56,8 +52,6 @@ function createScene() {
     createLights(scene);
 
     createHeroDude(scene);
-    //delayCreateScene();
-
  
    return scene;
 }
@@ -65,11 +59,11 @@ function createScene() {
 function createGround(scene) {
     const groundOptions = { width:2000, height:2000, subdivisions:20, minHeight:0, maxHeight:100, onReady: onGroundCreated};
     //scene is optional and defaults to the current scene
-    const ground = BABYLON.MeshBuilder.CreateGroundFromHeightMap("gdhm", 'images/hmap5.png', groundOptions, scene); 
+    const ground = BABYLON.MeshBuilder.CreateGroundFromHeightMap("gdhm", 'images/hmap1.png', groundOptions, scene); 
 
     function onGroundCreated() {
         const groundMaterial = new BABYLON.StandardMaterial("groundMaterial", scene);
-        groundMaterial.diffuseTexture = new BABYLON.Texture("images/grass.jpg");
+        groundMaterial.diffuseTexture = new BABYLON.Texture("images/sadio.jpeg");
         ground.material = groundMaterial;
         // to be taken into account by collision detection
         ground.checkCollisions = true;
@@ -80,8 +74,11 @@ function createGround(scene) {
 
 function createLights(scene) {
     // i.e sun light with all light rays parallels, the vector is the direction.
-    let light0 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(-1, -1, 0), scene);
-
+    let light0 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(-1, -1, 0.5), scene);
+    let light1 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(1, 1, 0), scene);
+   // let light2 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(0, 0, 3), scene);
+  // let light3 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(3, 0, 1), scene);
+   //let light4 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(2, 0, 5), scene);
 }
 
 function createFreeCamera(scene) {
@@ -109,273 +106,61 @@ function createFreeCamera(scene) {
 function createFollowCamera(scene, target) {
     let camera = new BABYLON.FollowCamera("tankFollowCamera", target.position, scene, target);
 
-    camera.radius = 40; // how far from the object to follow
-	camera.heightOffset = 14; // how high above the object to place the camera
+    camera.radius = 300; // how far from the object to follow
+	camera.heightOffset = 40; // how high above the object to place the camera
 	camera.rotationOffset = 180; // the viewing angle
 	camera.cameraAcceleration = .1; // how fast to move
-	camera.maxCameraSpeed = 5; // speed limit
+	camera.maxCameraSpeed = 6; // speed limit
 
     return camera;
 }
 
 let zMovement = 5;
 function createTank(scene) {
-    let tank = new BABYLON.MeshBuilder.CreateBox("heroTank", {height:1, depth:6, width:6}, scene);
-    let tankMaterial = new BABYLON.StandardMaterial("tankMaterial", scene);
-    tankMaterial.diffuseColor = new BABYLON.Color3.Red;
-    tankMaterial.emissiveColor = new BABYLON.Color3.Blue;
-    tank.material = tankMaterial;
-
-    // By default the box/tank is in 0, 0, 0, let's change that...
-    tank.position.y = 0.6;
-    tank.speed = 1;
-    tank.frontVector = new BABYLON.Vector3(0, 0, 1);
-
-    tank.move = () => {
-                //tank.position.z += -1; // speed should be in unit/s, and depends on
-                                 // deltaTime !
-
-        // if we want to move while taking into account collision detections
-        // collision uses by default "ellipsoids"
-
-        let yMovement = 0;
-       
-        if (tank.position.y > 2) {
-            zMovement = 0;
-            yMovement = -2;
-        } 
-        //tank.moveWithCollisions(new BABYLON.Vector3(0, yMovement, zMovement));
-
-        if(inputStates.up) {
-            //tank.moveWithCollisions(new BABYLON.Vector3(0, 0, 1*tank.speed));
-            tank.moveWithCollisions(tank.frontVector.multiplyByFloats(tank.speed, tank.speed, tank.speed));
-        }    
-        if(inputStates.down) {
-            //tank.moveWithCollisions(new BABYLON.Vector3(0, 0, -1*tank.speed));
-            tank.moveWithCollisions(tank.frontVector.multiplyByFloats(-tank.speed, -tank.speed, -tank.speed));
-
-        }    
-        if(inputStates.left) {
-            //tank.moveWithCollisions(new BABYLON.Vector3(-1*tank.speed, 0, 0));
-            tank.rotation.y -= 0.02;
-            tank.frontVector = new BABYLON.Vector3(Math.sin(tank.rotation.y), 0, Math.cos(tank.rotation.y));
-        }    
-        if(inputStates.right) {
-            //tank.moveWithCollisions(new BABYLON.Vector3(1*tank.speed, 0, 0));
-            tank.rotation.y += 0.02;
-            tank.frontVector = new BABYLON.Vector3(Math.sin(tank.rotation.y), 0, Math.cos(tank.rotation.y));
-        }
-
-    }
-
-    return tank;
-}
-
-function CreateBo(scene){
-   
-
+    let tank = new BABYLON.MeshBuilder.CreateSphere("heroTank", {diameter: 7, segments: 13}, scene);  
+     let tankMaterial = new BABYLON.StandardMaterial("tankMaterial", scene);
+     tankMaterial.diffuseTexture = new BABYLON.Texture("images/ball.jpg", scene);
+    tankMaterial.diffuseColor = new BABYLON.Color3.White;
+     tank.material = tankMaterial;
+     tank.position.y = 3.5;
+     tank.speed = 2;
+     tank.frontVector = new BABYLON.Vector3(0, 0, 1);
+     tank.move = () => {
   
-    const detached_house = buildHouse(1);
-    detached_house.rotation.y = -Math.PI / 16;
-    detached_house.position.x = -6.8;
-    detached_house.position.z = 2.5;
-
-    const semi_house = buildHouse(2);
-    semi_house .rotation.y = -Math.PI / 16;
-    semi_house.position.x = -4.5;
-    semi_house.position.z = 3;
-
-    const places = []; //each entry is an array [house type, rotation, x, z]
-    places.push([1, -Math.PI / 16, -6.8, 2.5 ]);
-    places.push([2, -Math.PI / 16, -4.5, 3 ]);
-    places.push([2, -Math.PI / 16, -1.5, 4 ]);
-    places.push([2, -Math.PI / 3, 1.5, 6 ]);
-    places.push([2, 15 * Math.PI / 16, -6.4, -1.5 ]);
-    places.push([1, 15 * Math.PI / 16, -4.1, -1 ]);
-    places.push([2, 15 * Math.PI / 16, -2.1, -0.5 ]);
-    places.push([1, 5 * Math.PI / 4, 0, -1 ]);
-    places.push([1, Math.PI + Math.PI / 2.5, 0.5, -3 ]);
-    places.push([2, Math.PI + Math.PI / 2.1, 0.75, -5 ]);
-    places.push([1, Math.PI + Math.PI / 2.25, 0.75, -7 ]);
-    places.push([2, Math.PI / 1.9, 4.75, -1 ]);
-    places.push([1, Math.PI / 1.95, 4.5, -3 ]);
-    places.push([2, Math.PI / 1.9, 4.75, -5 ]);
-    places.push([1, Math.PI / 1.9, 4.75, -7 ]);
-    places.push([2, -Math.PI / 3, 5.25, 2 ]);
-    places.push([1, -Math.PI / 3, 6, 4 ]);
-
-    //Create instances from the first two that were built 
-    const houses = [];
-    for (let i = 0; i < places.length; i++) {
-        if (places[i][0] === 1) {
-            houses[i] = detached_house.createInstance("house" + i);
-        }
-        else {
-            houses[i] = semi_house.createInstance("house" + i);
-        }
-        houses[i].rotation.y = places[i][1];
-        houses[i].position.x = places[i][2];
-        houses[i].position.z = places[i][3];
-    }
-    
-    return scene;
-}
-
-/******Build Functions***********/
-
-
-const buildHouse = (width) => {
-    const box = buildBox(width);
-    const roof = buildRoof(width);
-
-    return BABYLON.Mesh.MergeMeshes([box, roof], true, false, null, false, true);
-}
-
-const buildBox = (width) => {
-    //texture
-    const boxMat = new BABYLON.StandardMaterial("boxMat");
-    if (width == 2) {
-       boxMat.diffuseTexture = new BABYLON.Texture("https://assets.babylonjs.com/environments/semihouse.png", scene) 
-    }
-    else {
-        boxMat.diffuseTexture = new BABYLON.Texture("https://assets.babylonjs.com/environments/cubehouse.png",scene);   
-    }
-
-    //options parameter to set different images on each side
-    const faceUV = [];
-    if (width == 2) {
-        faceUV[0] = new BABYLON.Vector4(0.6, 0.0, 1.0, 1.0); //rear face
-        faceUV[1] = new BABYLON.Vector4(0.0, 0.0, 0.4, 1.0); //front face
-        faceUV[2] = new BABYLON.Vector4(0.4, 0, 0.6, 1.0); //right side
-        faceUV[3] = new BABYLON.Vector4(0.4, 0, 0.6, 1.0); //left side
-    }
-    else {
-        faceUV[0] = new BABYLON.Vector4(0.5, 0.0, 0.75, 1.0); //rear face
-        faceUV[1] = new BABYLON.Vector4(0.0, 0.0, 0.25, 1.0); //front face
-        faceUV[2] = new BABYLON.Vector4(0.25, 0, 0.5, 1.0); //right side
-        faceUV[3] = new BABYLON.Vector4(0.75, 0, 1.0, 1.0); //left side
-    }
-    // top 4 and bottom 5 not seen so not set
-
-    /**** World Objects *****/
-    const box = BABYLON.MeshBuilder.CreateBox("box", {width: width, faceUV: faceUV, wrap: true});
-    box.material = boxMat;
-    box.position.y = 0.5;
-
-    
-
-    return box;
-}
-
-const buildRoof = (width) => {
-    //texture
-    const roofMat = new BABYLON.StandardMaterial("roofMat");
-    roofMat.diffuseTexture = new BABYLON.Texture("https://assets.babylonjs.com/environments/roof.jpg");
-
-    const roof = BABYLON.MeshBuilder.CreateCylinder("roof", {diameter: 1.3, height: 1.2, tessellation: 3});
-    roof.material = roofMat;
-    roof.scaling.x = 0.75;
-    roof.scaling.y = width;
-    roof.rotation.z = Math.PI / 2;
-    roof.position.y = 1.22;
-
-    return roof;
-}
-
-
-const createwalk = function (scene) {
-    
-    const walk = function (turn, dist) {
-        this.turn = turn;
-        this.dist = dist;
-    }
-    
-    const track = [];
-    track.push(new walk(86, 7));
-    track.push(new walk(-85, 14.8));
-    track.push(new walk(-93, 16.5));
-    track.push(new walk(48, 25.5));
-    track.push(new walk(-112, 30.5));
-    track.push(new walk(-72, 33.2));
-    track.push(new walk(42, 37.5));
-    track.push(new walk(-98, 45.2));
-    track.push(new walk(0, 47))
-
-    // Dude
-
-    BABYLON.SceneLoader.ImportMeshAsync("him", "models/Dude/", "Dude.babylon", scene).then((result) => {
-        var dude = result.meshes[0];
-        dude.scaling = new BABYLON.Vector3(0.008, 0.008, 0.008);
-            
-        dude.position = new BABYLON.Vector3(-6, 0, 0);
-        dude.rotate(BABYLON.Axis.Y, BABYLON.Tools.ToRadians(-95), BABYLON.Space.LOCAL);
-        const startRotation = dude.rotationQuaternion.clone();    
-            
-        scene.beginAnimation(result.skeletons[0], 0, 100, true, 1.0);
-
-        let distance = 0;
-        let step = 0.015;
-        let p = 0;
-
-        scene.onBeforeRenderObservable.add(() => {
-		    dude.movePOV(0, 0, step);
-            distance += step;
-              
-            if (distance > track[p].dist) {
-                    
-                dude.rotate(BABYLON.Axis.Y, BABYLON.Tools.ToRadians(track[p].turn), BABYLON.Space.LOCAL);
-                p +=1;
-                p %= track.length; 
-                if (p === 0) {
-                    distance = 0;
-                    dude.position = new BABYLON.Vector3(-6, 0, 0);
-                    dude.rotationQuaternion = startRotation.clone();
-                }
-            }
-			
-        })
-    });
-    
-    return scene;
-};
-
-
-
-
-
-
-
-function CreateB(scene){
-
-    const roofMat = new BABYLON.StandardMaterial("roofMat");
-    roofMat.diffuseTexture = new BABYLON.Texture("https://assets.babylonjs.com/environments/roof.jpg",scene);
-    const boxMat = new BABYLON.StandardMaterial("boxMat");
-    boxMat.diffuseTexture = new BABYLON.Texture("https://assets.babylonjs.com/environments/cubehouse.png",scene)
-
-
-    //options parameter to set different images on each side
-    const faceUV = [];
-    faceUV[0] = new BABYLON.Vector4(0.5, 0.0, 0.75, 1.0); //rear face
-    faceUV[1] = new BABYLON.Vector4(0.0, 0.0, 0.25, 1.0); //front face
-    faceUV[2] = new BABYLON.Vector4(0.25, 0, 0.5, 1.0); //right side
-    faceUV[3] = new BABYLON.Vector4(0.75, 0, 1.0, 1.0); //left side
-    // top 4 and bottom 5 not seen so not set
-    
-
-    /**** World Objects *****/
-    const box = BABYLON.MeshBuilder.CreateBox("box", {faceUV: faceUV, wrap: true});
-    box.material = boxMat;
-    box.position.y = 13;
-    const roof = BABYLON.MeshBuilder.CreateCylinder("roof", {diameter: 1.3, height: 1.2, tessellation: 3});
-    roof.material = roofMat;
-    roof.scaling.x = 0.75;
-    roof.rotation.z = Math.PI / 2;
-    roof.position.y = 1.22;
-
-    return scene;
-}
-
-
+         let yMovement = 0;
+         if (tank.position.y > 2) {
+             zMovement = 0;
+             yMovement = -2;
+         } 
+         //tank.moveWithCollisions(new BABYLON.Vector3(0, yMovement, zMovement));
+ 
+         
+         if(inputStates.up) {
+             //tank.moveWithCollisions(new BABYLON.Vector3(0, 0, 1*tank.speed));
+             tank.moveWithCollisions(tank.frontVector.multiplyByFloats(tank.speed, tank.speed, tank.speed));
+             tankMaterial.diffuseTexture.uOffset += -0.02;
+         }    
+         if(inputStates.down) {
+             //tank.moveWithCollisions(new BABYLON.Vector3(0, 0, -1*tank.speed));
+             tank.moveWithCollisions(tank.frontVector.multiplyByFloats(-tank.speed, -tank.speed, -tank.speed));
+             tankMaterial.diffuseTexture.uOffset += -0.02;
+ 
+         }  
+         if(inputStates.left) {
+             //tank.moveWithCollisions(new BABYLON.Vector3(-1*tank.speed, 0, 0));
+             tank.rotation.y -= 0.02;
+ 
+             tank.frontVector = new BABYLON.Vector3(Math.sin(tank.rotation.y), 0, Math.cos(tank.rotation.y));
+         }    
+         if(inputStates.right) {
+             //tank.moveWithCollisions(new BABYLON.Vector3(1*tank.speed, 0, 0));
+             tank.rotation.y += 0.02;
+             tank.frontVector = new BABYLON.Vector3(Math.sin(tank.rotation.y), 0, Math.cos(tank.rotation.y));
+         }
+     }
+ 
+     return tank;
+ }
 
 function createHeroDude(scene) {
    // load the Dude 3D animated model
@@ -385,7 +170,7 @@ function createHeroDude(scene) {
         heroDude.position = new BABYLON.Vector3(0, 0, 5);  // The original dude
         // make it smaller 
         heroDude.scaling = new BABYLON.Vector3(0.2  , 0.2, 0.2);
-        //heroDude.speed = 0.1;
+        heroDude.speed = 0.4;
 
         // give it a name so that we can query the scene to get it by name
         heroDude.name = "heroDude";
@@ -414,11 +199,6 @@ function createHeroDude(scene) {
 
     });
 }
-
-
-
-
-
 
 
 function doClone(originalMesh, skeletons, id) {

@@ -28,9 +28,8 @@ export default class Dude {
                   this.dudeMesh.rotation.y = alpha;
       
                   // let make the Dude move towards the tank
-                  if(distance > 10) {
-                      //a.restart();  
-
+                  if(distance > 30) {
+                      //a.restart();   
                       this.dudeMesh.moveWithCollisions(dir.multiplyByFloats(this.speed, this.speed, this.speed));
                   }
                   else {
