@@ -163,8 +163,8 @@ const createpoto = (scene) => {
     
     const lines = BABYLON.MeshBuilder.CreateLines("lines", {points: myPoints},scene);
 
-    lines.position.x = -600,
-    lines.position.x = 600;
+    lines.position.y = 6,
+    lines.position.z = 600;
     
    
     return scene;
@@ -183,11 +183,15 @@ const createFilet = () => {
    myPoints.push(myPoints[0]);
    
    const box = BABYLON.MeshBuilder.CreateBox("box", {height: 78, width: 78, depth: 0.001});
+   
  
    let boxMaterial = new BABYLON.StandardMaterial("boxMaterial", scene);
    boxMaterial.diffuseTexture = new BABYLON.Texture("images/fillet.jpeg", scene);
   boxMaterial.diffuseColor = new BABYLON.Color3.Blue;
   box.material = boxMaterial;
+  box.position.y = 6,
+  box.position.z = 640;
+  
    return scene;
 
 };
