@@ -33,6 +33,8 @@ function createScene() {
     let tank = createTank(scene);
     let poto = createpoto(scene)
     let filet = createFilet()
+    let poto2 = createpoto2(scene)
+    let filet2 = createFilet2()
 
     // second parameter is the target to follow
     let followCamera = createFollowCamera(scene, tank);
@@ -64,7 +66,7 @@ function createLights(scene) {
     let light0 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(-1, -1, 0.5), scene);
     let light1 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(1, 1, 0), scene);
     let light2 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(0, 0, 3), scene);
-   let light3 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(3, 0, 1), scene);
+   let light3 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(3, 0, 650), scene);
    let light4 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(2, 0, 5), scene);
 }
 
@@ -191,6 +193,53 @@ const createFilet = () => {
   box.material = boxMaterial;
   box.position.y = 6,
   box.position.z = 640;
+  
+   return scene;
+
+};
+
+const createpoto2 = (scene) => {
+    
+    const myPoints = [
+        new BABYLON.Vector3(-40, 40, 0),
+        new BABYLON.Vector3(-40, -20, 0),
+        new BABYLON.Vector3(40, -20, 0),
+        new BABYLON.Vector3(40, 40, 0),
+        
+    ]
+
+    myPoints.push(myPoints[0]);
+    
+    const lines = BABYLON.MeshBuilder.CreateLines("lines", {points: myPoints},scene);
+
+    lines.position.y = 6,
+    lines.position.z = -500;
+    
+   
+    return scene;
+
+};
+const createFilet2 = () => {
+
+    const myPoints = [
+        new BABYLON.Vector3(-40, 40, 0.01),
+       new BABYLON.Vector3(-40, -20, 0.01),
+       new BABYLON.Vector3(40, -20, 0.01),
+       new BABYLON.Vector3(40, 40, 0.01),
+       
+   ]
+
+   myPoints.push(myPoints[0]);
+   
+   const box = BABYLON.MeshBuilder.CreateBox("box", {height: 78, width: 78, depth: 0.001});
+   
+ 
+   let boxMaterial = new BABYLON.StandardMaterial("boxMaterial", scene);
+   boxMaterial.diffuseTexture = new BABYLON.Texture("images/fillet.jpeg", scene);
+  boxMaterial.diffuseColor = new BABYLON.Color3.White;
+  box.material = boxMaterial;
+  box.position.y = 6,
+  box.position.z = -540;
   
    return scene;
 
