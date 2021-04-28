@@ -1,5 +1,3 @@
-import Dude from "./Dude.js";
-
 let canvas;
 let engine;
 let scene;
@@ -23,17 +21,6 @@ function startGame() {
         let deltaTime = engine.getDeltaTime(); // remind you something ?
 
         tank.move();
-
-        let heroDude = scene.getMeshByName("heroDude");
-        if(heroDude)
-            heroDude.Dude.move(scene);
-
-        if(scene.dudes) {
-            for(var i = 0 ; i < scene.dudes.length ; i++) {
-                scene.dudes[i].Dude.move(scene);
-            }
-        }    
-
         scene.render();
     });
 }
@@ -44,14 +31,14 @@ function createScene() {
     let freeCamera = createFreeCamera(scene);
 
     let tank = createTank(scene);
+    let poto = createpoto(scene)
+    let filet = createFilet()
 
     // second parameter is the target to follow
     let followCamera = createFollowCamera(scene, tank);
     scene.activeCamera = followCamera;
 
     createLights(scene);
-
-    createHeroDude(scene);
  
    return scene;
 }
@@ -76,13 +63,13 @@ function createLights(scene) {
     // i.e sun light with all light rays parallels, the vector is the direction.
     let light0 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(-1, -1, 0.5), scene);
     let light1 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(1, 1, 0), scene);
-   // let light2 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(0, 0, 3), scene);
-  // let light3 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(3, 0, 1), scene);
-   //let light4 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(2, 0, 5), scene);
+    let light2 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(0, 0, 3), scene);
+   let light3 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(3, 0, 1), scene);
+   let light4 = new BABYLON.DirectionalLight("dir0", new BABYLON.Vector3(2, 0, 5), scene);
 }
 
 function createFreeCamera(scene) {
-    let camera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0, 50, 0), scene);
+    let camera = new BABYLON.FreeCamera("freeCamera", new BABYLON.Vector3(0, 50, 10), scene);
     camera.attachControl(canvas);
     // prevent camera to cross ground
     camera.checkCollisions = true; 
@@ -117,126 +104,93 @@ function createFollowCamera(scene, target) {
 
 let zMovement = 5;
 function createTank(scene) {
-    let tank = new BABYLON.MeshBuilder.CreateSphere("heroTank", {diameter: 7, segments: 13}, scene);  
-     let tankMaterial = new BABYLON.StandardMaterial("tankMaterial", scene);
-     tankMaterial.diffuseTexture = new BABYLON.Texture("images/ball.jpg", scene);
-    tankMaterial.diffuseColor = new BABYLON.Color3.White;
-     tank.material = tankMaterial;
-     tank.position.y = 3.5;
-     tank.speed = 2;
-     tank.frontVector = new BABYLON.Vector3(0, 0, 1);
-     tank.move = () => {
-  
-         let yMovement = 0;
-         if (tank.position.y > 2) {
-             zMovement = 0;
-             yMovement = -2;
-         } 
-         //tank.moveWithCollisions(new BABYLON.Vector3(0, yMovement, zMovement));
+   let tank = new BABYLON.MeshBuilder.CreateSphere("heroTank", {diameter: 10, segments: 13}, scene);  
+    let tankMaterial = new BABYLON.StandardMaterial("tankMaterial", scene);
+    tankMaterial.diffuseTexture = new BABYLON.Texture("images/ball.jpg", scene);
+   tankMaterial.diffuseColor = new BABYLON.Color3.White;
+    tank.material = tankMaterial;
+    tank.position.y = 5;
+    tank.speed = 1;
+    tank.frontVector = new BABYLON.Vector3(0, 0, 1);
+    tank.move = () => {
  
-         
-         if(inputStates.up) {
-             //tank.moveWithCollisions(new BABYLON.Vector3(0, 0, 1*tank.speed));
-             tank.moveWithCollisions(tank.frontVector.multiplyByFloats(tank.speed, tank.speed, tank.speed));
-             tankMaterial.diffuseTexture.uOffset += -0.02;
-         }    
-         if(inputStates.down) {
-             //tank.moveWithCollisions(new BABYLON.Vector3(0, 0, -1*tank.speed));
-             tank.moveWithCollisions(tank.frontVector.multiplyByFloats(-tank.speed, -tank.speed, -tank.speed));
-             tankMaterial.diffuseTexture.uOffset += -0.02;
- 
-         }  
-         if(inputStates.left) {
-             //tank.moveWithCollisions(new BABYLON.Vector3(-1*tank.speed, 0, 0));
-             tank.rotation.y -= 0.02;
- 
-             tank.frontVector = new BABYLON.Vector3(Math.sin(tank.rotation.y), 0, Math.cos(tank.rotation.y));
-         }    
-         if(inputStates.right) {
-             //tank.moveWithCollisions(new BABYLON.Vector3(1*tank.speed, 0, 0));
-             tank.rotation.y += 0.02;
-             tank.frontVector = new BABYLON.Vector3(Math.sin(tank.rotation.y), 0, Math.cos(tank.rotation.y));
-         }
-     }
- 
-     return tank;
- }
+        let yMovement = 0;
+        if (tank.position.y > 2) {
+            zMovement = 0;
+            yMovement = -2;
+        } 
+        //tank.moveWithCollisions(new BABYLON.Vector3(0, yMovement, zMovement));
 
-function createHeroDude(scene) {
-   // load the Dude 3D animated model
-    // name, folder, skeleton name 
-    BABYLON.SceneLoader.ImportMesh("him", "models/Dude/", "Dude.babylon", scene,  (newMeshes, particleSystems, skeletons) => {
-        let heroDude = newMeshes[0];
-        heroDude.position = new BABYLON.Vector3(0, 0, 5);  // The original dude
-        // make it smaller 
-        heroDude.scaling = new BABYLON.Vector3(0.2  , 0.2, 0.2);
-        heroDude.speed = 0.4;
+        
+        if(inputStates.up) {
+            //tank.moveWithCollisions(new BABYLON.Vector3(0, 0, 1*tank.speed));
+            tank.moveWithCollisions(tank.frontVector.multiplyByFloats(tank.speed, tank.speed, tank.speed));
+            tankMaterial.diffuseTexture.uOffset += -0.02;
+        }    
+        if(inputStates.down) {
+            //tank.moveWithCollisions(new BABYLON.Vector3(0, 0, -1*tank.speed));
+            tank.moveWithCollisions(tank.frontVector.multiplyByFloats(-tank.speed, -tank.speed, -tank.speed));
+            tankMaterial.diffuseTexture.uOffset += -0.02;
 
-        // give it a name so that we can query the scene to get it by name
-        heroDude.name = "heroDude";
+        }  
+        if(inputStates.left) {
+            //tank.moveWithCollisions(new BABYLON.Vector3(-1*tank.speed, 0, 0));
+            tank.rotation.y -= 0.02;
 
-        // there might be more than one skeleton in an imported animated model. Try console.log(skeletons.length)
-        // here we've got only 1. 
-        // animation parameters are skeleton, starting frame, ending frame,  a boolean that indicate if we're gonna 
-        // loop the animation, speed, 
-        let a = scene.beginAnimation(skeletons[0], 0, 120, true, 1);
-
-        let hero = new Dude(heroDude, 0.1);
-
-        // make clones
-        scene.dudes = [];
-        for(let i = 0; i < 10; i++) {
-            scene.dudes[i] = doClone(heroDude, skeletons, i);
-            scene.beginAnimation(scene.dudes[i].skeleton, 0, 120, true, 1);
-
-            // Create instance with move method etc.
-            var temp = new Dude(scene.dudes[i], 0.3);
-            // remember that the instances are attached to the meshes
-            // and the meshes have a property "Dude" that IS the instance
-            // see render loop then....
-        }
-         
-
-    });
-}
-
-
-function doClone(originalMesh, skeletons, id) {
-    let myClone;
-    let xrand = Math.floor(Math.random()*500 - 250);
-    let zrand = Math.floor(Math.random()*500 - 250);
-
-    myClone = originalMesh.clone("clone_" + id);
-    myClone.position = new BABYLON.Vector3(xrand, 0, zrand);
-
-    if(!skeletons) return myClone;
-
-    // The mesh has at least one skeleton
-    if(!originalMesh.getChildren()) {
-        myClone.skeleton = skeletons[0].clone("clone_" + id + "_skeleton");
-        return myClone;
-    } else {
-        if(skeletons.length === 1) {
-            // the skeleton controls/animates all children, like in the Dude model
-            let clonedSkeleton = skeletons[0].clone("clone_" + id + "_skeleton");
-            myClone.skeleton = clonedSkeleton;
-            let nbChildren = myClone.getChildren().length;
-
-            for(let i = 0; i < nbChildren;  i++) {
-                myClone.getChildren()[i].skeleton = clonedSkeleton
-            }
-            return myClone;
-        } else if(skeletons.length === originalMesh.getChildren().length) {
-            // each child has its own skeleton
-            for(let i = 0; i < myClone.getChildren().length;  i++) {
-                myClone.getChildren()[i].skeleton() = skeletons[i].clone("clone_" + id + "_skeleton_" + i);
-            }
-            return myClone;
+            tank.frontVector = new BABYLON.Vector3(Math.sin(tank.rotation.y), 0, Math.cos(tank.rotation.y));
+        }    
+        if(inputStates.right) {
+            //tank.moveWithCollisions(new BABYLON.Vector3(1*tank.speed, 0, 0));
+            tank.rotation.y += 0.02;
+            tank.frontVector = new BABYLON.Vector3(Math.sin(tank.rotation.y), 0, Math.cos(tank.rotation.y));
         }
     }
 
-    return myClone;
+    return tank;
 }
+
+const createpoto = (scene) => {
+    
+    const myPoints = [
+        new BABYLON.Vector3(-40, 40, 0),
+        new BABYLON.Vector3(-40, -20, 0),
+        new BABYLON.Vector3(40, -20, 0),
+        new BABYLON.Vector3(40, 40, 0),
+        
+    ]
+
+    myPoints.push(myPoints[0]);
+    
+    const lines = BABYLON.MeshBuilder.CreateLines("lines", {points: myPoints},scene);
+
+    lines.position.x = -600,
+    lines.position.x = 600;
+    
+   
+    return scene;
+
+};
+const createFilet = () => {
+
+    const myPoints = [
+        new BABYLON.Vector3(-40, 40, 0.01),
+       new BABYLON.Vector3(-40, -20, 0.01),
+       new BABYLON.Vector3(40, -20, 0.01),
+       new BABYLON.Vector3(40, 40, 0.01),
+       
+   ]
+
+   myPoints.push(myPoints[0]);
+   
+   const box = BABYLON.MeshBuilder.CreateBox("box", {height: 78, width: 78, depth: 0.001});
+ 
+   let boxMaterial = new BABYLON.StandardMaterial("boxMaterial", scene);
+   boxMaterial.diffuseTexture = new BABYLON.Texture("images/fillet.jpeg", scene);
+  boxMaterial.diffuseColor = new BABYLON.Color3.Blue;
+  box.material = boxMaterial;
+   return scene;
+
+};
 
 window.addEventListener("resize", () => {
     engine.resize()
